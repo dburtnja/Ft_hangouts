@@ -1,6 +1,8 @@
 package com.example.ezburde.ft_hangouts;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -35,5 +37,32 @@ public class DbHelper extends SQLiteOpenHelper {
         query = String.format("DELETE TABLE IF EXIST %s", TABLE_NAME);
         db.execSQL(query);
         onCreate(db);
+    }
+
+    public void insertContact(String name, String phone, String photo) {
+        SQLiteDatabase  db;
+        ContentValues   contentValues;
+
+        db = this.getWritableDatabase();
+        contentValues = new ContentValues();
+        contentValues.put(CONT_NAME, name);
+        contentValues.put(CONT_PHONE, phone);
+        contentValues.put(CONT_PHOTO, photo);
+        db.insertWithOnConflict(TABLE_NAME, null, contentValues,
+                SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+    }
+
+    public void deleteContact(int id) {
+        SQLiteDatabase  db;
+
+        db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, "ID=?", new String[]{Integer.toString(id)});
+        db.close();
+    }
+
+    public Cursor getCursor() {
+        SQLiteDatabase  db;
+        Cursor
     }
 }
