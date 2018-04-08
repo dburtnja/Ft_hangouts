@@ -23,9 +23,10 @@ public class ContactCursorAdapter extends CursorAdapter {
         TextView    name;
         TextView    phone;
 
-        name = (TextView) view.findViewById(R.id.contactName);
-        phone = (TextView) view.findViewById(R.id.contactPhone);
+        name = view.findViewById(R.id.contactName);
+        phone = view.findViewById(R.id.contactPhone);
 
-
+        name.setText(cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.CONT_NAME)));
+        phone.setText(cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.CONT_PHONE)));
     }
 }

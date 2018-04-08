@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "ContactsDB";
-    private static final int    DB_VER = 1;
+    private static final int    DB_VER = 2;
 
     public static final String  TABLE_NAME = "Contacts";
     public static final String  CONT_NAME = "Name";
@@ -23,10 +23,10 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String  query;
 
-        query = String.format("CREATE TABLE %s (ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        query = String.format("CREATE TABLE %s ( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "%s TEXT NOT NULL, " +
                 "%s TEXT NOT NULL, " +
-                "%s TEXT", TABLE_NAME, CONT_NAME, CONT_PHONE, CONT_PHOTO);
+                "%s TEXT)", TABLE_NAME, CONT_NAME, CONT_PHONE, CONT_PHOTO);
         db.execSQL(query);
     }
 
@@ -34,7 +34,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String  query;
 
-        query = String.format("DELETE TABLE IF EXIST %s", TABLE_NAME);
+        query = String.format("DROP TABLE IF EXISTS %s", TABLE_NAME);
         db.execSQL(query);
         onCreate(db);
     }
@@ -57,12 +57,27 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase  db;
 
         db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, "ID=?", new String[]{Integer.toString(id)});
+        db.delete(TABLE_NAME, "_id=?", new String[]{Integer.toString(id)});
+        db.close();
+    }
+
+    public void cursorToAdapter(ContactCursorAdapter adapter) {
+        SQLiteDatabase  db;
+        Cursor          cursor;
+
+        db = this.getReadableDatabase();
+        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        adapter.changeCursor(cursor);
+        cursor.close();
         db.close();
     }
 
     public Cursor getCursor() {
         SQLiteDatabase  db;
-        Cursor
+        Cursor          cursor;
+
+        db = this.getReadableDatabase();
+        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        return cursor;
     }
 }
