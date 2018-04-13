@@ -5,15 +5,24 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "ContactsDB";
     private static final int    DB_VER = 2;
 
     public static final String  TABLE_NAME = "Contacts";
+    public static final String  CONT_ID = "_id";
     public static final String  CONT_NAME = "Name";
     public static final String  CONT_PHONE = "Phone";
     public static final String  CONT_PHOTO = "Photo";
+
+    private SQLiteDatabase  db;
+    private Cursor          cursor;
 
     public DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VER);
@@ -23,10 +32,10 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String  query;
 
-        query = String.format("CREATE TABLE %s ( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        query = String.format("CREATE TABLE %s ( %s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "%s TEXT NOT NULL, " +
                 "%s TEXT NOT NULL, " +
-                "%s TEXT)", TABLE_NAME, CONT_NAME, CONT_PHONE, CONT_PHOTO);
+                "%s TEXT)", CONT_ID, TABLE_NAME, CONT_NAME, CONT_PHONE, CONT_PHOTO);
         db.execSQL(query);
     }
 
@@ -57,27 +66,49 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase  db;
 
         db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, "_id=?", new String[]{Integer.toString(id)});
+        db.delete(TABLE_NAME,  CONT_ID + "=?", new String[]{Integer.toString(id)});
         db.close();
     }
 
     public void cursorToAdapter(ContactCursorAdapter adapter) {
-        SQLiteDatabase  db;
-        Cursor          cursor;
-
-        db = this.getReadableDatabase();
-        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        cursor = getCursor();
         adapter.changeCursor(cursor);
-        cursor.close();
-        db.close();
+        closeConnection();
     }
 
-    public Cursor getCursor() {
-        SQLiteDatabase  db;
-        Cursor          cursor;
+    public List<ContactModel> getContactsList() {
+        int                 nameIndex;
+        int                 phoneIndex;
+        int                 photoIndex;
+        int                 idIndex;
+        List<ContactModel>  list;
 
-        db = this.getReadableDatabase();
-        cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-        return cursor;
+        list = new LinkedList<>();
+        cursor = getCursor();
+        nameIndex = cursor.getColumnIndex(CONT_NAME);
+        phoneIndex = cursor.getColumnIndex(CONT_PHONE);
+        photoIndex = cursor.getColumnIndex(CONT_PHOTO);
+        idIndex = cursor.getColumnIndex(CONT_ID);
+        while (cursor.moveToNext()) {
+            list.add(new ContactModel(
+                    cursor.getInt(idIndex),
+                    cursor.getString(nameIndex),
+                    cursor.getString(phoneIndex),
+                    cursor.getString(photoIndex)
+            ));
+        }
+        closeConnection();
+        return list;
+    }
+
+    private Cursor getCursor() {
+        this.db = this.getReadableDatabase();
+        this.cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        return this.cursor;
+    }
+
+    private void closeConnection() {
+        this.cursor.close();
+        this.db.close();
     }
 }
