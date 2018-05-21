@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Movie;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class ContactAdapter extends ArrayAdapter {
 
         name.setText(contactModel.getName());
         phone.setText(contactModel.getPhone());
+        Log.i("cont", contactModel.toString());
         return view;
     }
 }

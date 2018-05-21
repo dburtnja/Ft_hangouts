@@ -7,6 +7,7 @@
     tools:context=".ContactInfoActivity">
 
     <LinearLayout
+        android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -43,24 +44,6 @@
             android:hint="@string/phone"
             android:inputType="phone"
             tools:ignore="LabelFor" />
-
-        <Button
-            android:id="@+id/sendSmsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sms" />
-
-        <Button
-            android:id="@+id/saveDeleteButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/save" />
-
-        <Button
-            android:id="@+id/closeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/close" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

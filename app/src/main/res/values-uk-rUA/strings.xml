@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ft_hangouts</string>
+    <string name="add_new_contact">Додати контакт</string>
+    <string name="contact_picture">Фото контакту</string>
+    <string name="sms">SMS</string>
+    <string name="save">Зберегти</string>
+    <string name="delete">Видалити</string>
+    <string name="company">Компанія</string>
+    <string name="phone">Номер телефону</string>
+    <string name="name">Ім\'я</string>
+    <string name="close">Закрити</string>
+</resources>

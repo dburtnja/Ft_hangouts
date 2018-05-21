@@ -1,6 +1,8 @@
 package com.example.ezburde.ft_hangouts;
 
-public class ContactModel {
+import java.io.Serializable;
+
+public class ContactModel implements Serializable {
     private int     id;
     private String  name;
     private String  phone;
@@ -27,5 +29,10 @@ public class ContactModel {
 
     public String getPhoto() {
         return photo;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ContactModel: id = %s, name = %s, phone = %s", this.id, this.name, this.phone);
     }
 }

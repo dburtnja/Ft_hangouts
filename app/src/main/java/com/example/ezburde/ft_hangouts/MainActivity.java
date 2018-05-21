@@ -12,27 +12,43 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
-    private DbHelper    dbHelper;
-    private ListView    myList;
+    private DbHelper            dbHelper;
+    private ListView            myList;
+    private List<ContactModel>  contactModels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new DbHelper(this);
-        myList = findViewById(R.id.myList);
-        prepareListView(myList);
+        this.dbHelper = new DbHelper(this);
+        this.myList = findViewById(R.id.myList);
+        prepareListView(this.myList);
 
-        showListFromDB(dbHelper, myList);
+        showListFromDB(this.dbHelper, this.myList);
 
+    }
+
+    private void openContact(int id) {
+        Intent          intent;
+        ContactModel    contactModel;
+
+        intent = new Intent(this, ContactInfoActivity.class);
+        if (id != -1) {
+            contactModel = this.contactModels.get(id);
+            intent.putExtra("contactModel", contactModel);
+        }
+        startActivity(intent);
     }
 
     private void prepareListView(ListView listView) {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                openContact(position);
                 Log.i("position", Long.toString(position));
                 Log.i("id", Long.toString(id));
                 return false;
@@ -43,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private void showListFromDB(DbHelper dbHelper, ListView view) {
         ContactAdapter          adapter;
 
-        adapter = new ContactAdapter(this, dbHelper.getContactsList());
+        this.contactModels = dbHelper.getContactsList();
+        adapter = new ContactAdapter(this, this.contactModels);
         view.setAdapter(adapter);
     }
 
@@ -55,13 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent  intent;
 
         switch (item.getItemId()) {
             case R.id.add_contact:
-                intent = new Intent(this, ContactInfoActivity.class);
-                intent.putExtra("saveButton", true);
-                startActivity(intent);
+                openContact(-1);
                 Log.i("button", "add contact");
                 return true;
         }
